@@ -96,7 +96,8 @@ class Sudoku():
         :return: This returns the box index of a cell.
         :rtype: int
         """
-        return (row//2)*2+(col//2)+1
+        x = int(np.sqrt(len(self.grid)))
+        return ((row)//2)*2+((col)//2)
 
     def get_box(self, box_id):
         """
@@ -107,11 +108,13 @@ class Sudoku():
         :return: A box of the sudoku.
         :rtype: np.ndarray[(Any, Any), int]
         """
-        start_row = ((box_id-1) // 2) * 2
-        start_col = ((box_id-1) % 2) * 2
+        x = int(np.sqrt(len(self.grid)))
+        
+        start_row = ((box_id-1) // x) * x
+        start_col = ((box_id-1) % x) * x
         
         
-        return self.grid[start_row:start_row + 2, start_col:start_col + 2]
+        return self.grid[start_row:start_row + x, start_col:start_col + x]
         
 
 
