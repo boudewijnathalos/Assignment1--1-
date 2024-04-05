@@ -60,5 +60,59 @@ class Sudoku():
         self.grid = grid
         return grid
 
+############ CODE BLOCK 12 ################
+    def get_row(self, row_id):
+        """
+        This method returns the row with index row_id.
+
+        :param row_id: The index of the row.
+        :type row_id: int
+        :return: A row of the sudoku.
+        :rtype: np.ndarray[(Any,), int]
+        """
+        
+        return self.grid[row_id]
+
+    def get_col(self, col_id):
+        """
+        This method returns the column with index col_id.
+
+        :param col_id: The index of the column.
+        :type col_id: int
+        :return: A row of the sudoku.
+        :rtype: np.ndarray[(Any,), int]
+        """
+        return self.grid[:, col_id]
+       
+
+    def get_box_index(self, row, col):
+        """
+        This returns the box index of a cell given the row and column index.
+        
+        :param col: The column index.
+        :type col: int
+        :param row: The row index.
+        :type row: int
+        :return: This returns the box index of a cell.
+        :rtype: int
+        """
+        return (row//2)*2+(col//2)
+
+    def get_box(self, box_id):
+        """
+        This method returns the "box_id" box.
+
+        :param box_id: The index of the sudoku box.
+        :type box_id: int
+        :return: A box of the sudoku.
+        :rtype: np.ndarray[(Any, Any), int]
+        """
+        start_row = (box_id // 2) * 2
+        start_col = (box_id % 2) * 2
+        
+        # Slice the grid to get the 3x3 box
+        return self.grid[start_row:start_row + 2, start_col:start_col + 2]
+        
+
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
