@@ -21,19 +21,32 @@ class Sudoku():
         :param self.size: The width/height of the sudoku grid.
         :type self.size: int
     """
-    def __init__(self, size=9):
+    def __init__(self, size=49):
         self.grid = np.zeros((size, size))
         self.size = size
         
+    def is_valid_sudoku_size(self, size):
+        for i in range(1, size + 1):
+            if i * i == size:
+                return True
+            elif i * i > size:
+                break
+        return False
+    
     def __repr__(self):
-        """
-        This returns a representation of a Sudoku object.
-
-        :return: A string representing the Sudoku object.
-        :rtype: str
-        """
-        # Change this to anything you like, such that you can easily print a Sudoku object.
-        return super(Sudoku, self).__repr__() 
+        if self.is_valid_sudoku_size(self.size):
+            string_grid = ""
+            for i, row in enumerate(self.grid):
+                if i % int(np.sqrt(self.size)) == 0 and i != 0:
+                    string_grid += "\n"  
+                for j, val in enumerate(row):
+                    if j % int(np.sqrt(self.size)) == 0 and j != 0:
+                        string_grid += "| "  
+                    string_grid += f"{int(val)} "
+                string_grid += "\n" 
+            return string_grid
+        else:
+            return 'Not a valid sudoku size'
 
 ############ CODE BLOCK 11 ################
     def set_grid(self, grid):
@@ -43,7 +56,9 @@ class Sudoku():
         :param grid: A 2D numpy array that contains the digits for the grid.
         :type grid: ndarray[(Any, Any), int]
         """
-        raise NotImplementedError("Please complete this method")
+        
+        self.grid = grid
+        return grid
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
