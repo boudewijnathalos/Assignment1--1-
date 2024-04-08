@@ -178,107 +178,53 @@ class Sudoku():
 
 ############ CODE BLOCK 14 ################
     def step(self, row=0, col=0, backtracking=False):
-        """
-        This is a recursive method that completes one step in the exhaustive search algorithm.
-        A step should contain at least, filling in one number in the sudoku and calling "next_step" to go to the next step.
-        If the current number for this step does not give a correct solution another number should be tried 
-        and if no numbers work the previous step should be adjusted.
-        
-        Hint 1: Numbers, that are already filled in should not be overwritten.
-        Hint 2: Think about a base case.
+        print(f"Attempting cell: ({row}, {col}), Current grid state:")
+        for r in self.grid:
+            print(r)
     
-        :param col: The current column index.
-        :type col: int
-        :param row: The current row index.
-        :type row: int
-        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
-        :type backtracking: boolean, optional
-        :return: This method returns if a correct solution can be found using this step.
-        :rtype: boolean
-<<<<<<< HEAD
-        """
-        raise NotImplementedError("Please complete this method")
-=======
+        if row == len(self.grid):  # End of grid check
+            print('End of Sudoku reached. Final grid:')
+            for r in self.grid:
+                print(r)
+            return self.check_sudoku()
+    
+        if self.grid[row][col] != 0:  # Skip filled cells
+            return self.next_step(row, col)
         
-        """
-        if row == len(self.grid): 
-            
-            return True
-        row_nr, col_nr = self.next_step(row, col)
-        for number in range(1, len(self.grid)+1):
-            if self.check_cell(row_nr, col_nr):
-                self.grid[row_nr][col_nr] = number
-                if self.step(row_nr, col_nr, backtracking):
+        for num in range(1, len(self.grid) + 1):  # Try all possible numbers
+            self.grid[row][col] = num
+            if self.check_cell(row, col):  # Validate the cell with the new number
+                if self.next_step(row, col):  # Move to the next cell
                     return True
-
-                self.clean_up(row, col)
-            
-        return False
-                    
+            self.grid[row][col] = 0  # Reset cell before trying next number
         
->>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
+        return False  # Backtrack if no number fits
 
     def next_step(self, row, col):
-        """
-        This method calculates the next step in the recursive exhaustive search algorithm.
-        This method should only determine which cell should be filled in next.
-        
-        :param col: The current column index.
-        :type col: int
-        :param row: The current row index.
-        :type row: int
-        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
-        :type backtracking: boolean, optional
-        :return: This method returns if a correct solution can be found using this next step.
-        :rtype: boolean
-        """
-<<<<<<< HEAD
-        raise NotImplementedError("Please complete this method")
-=======
-        for i in range(row, len(self.grid)):
-            for j in range(len(self.grid)):
-                if self.grid[i][j] == 0:
-                    return i, j
+        if col == len(self.grid) - 1:  # Move to the next row if at the end of the current row
+            return self.step(row + 1, 0)
+        else:  # Otherwise, just move to the next column
+            return self.step(row, col + 1)
 
-        return None, None
-        
->>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
-    
     def clean_up(self, row, col):
-        """
-        This method cleans up the current cell if no solution can be found for this cell.
-        
-        :param col: The current column index.
-        :type col: int
-        :param row: The current row index.
-        :type row: int
-        :return: This method returns if a correct solution can be found using this next step.
-        :rtype: boolean
-        """
-<<<<<<< HEAD
-        raise NotImplementedError("Please complete this method")
-=======
-        self.grid[row][col] = 0
->>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
-    
-    def solve(self, backtracking=False):
-        """
-        Solve the sudoku using recursive exhaustive search.
-        This is done by calling the "step" method, which does one recursive step.
-        This can be visualized as a process tree, where "step" completes the functionality of of node.
-        
-        This method is already implemented and you do not have to do anything here.
+        print(f"Cleaning up cell: ({row}, {col}), resetting to empty")
+        self.grid[row][col] = 0  # Reset the cell to empty
 
-        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
-        :type backtracking: boolean, optional
-        :return: This method returns if a correct solution for the whole sudoku was found.
-        :rtype: boolean
-        """
-<<<<<<< HEAD
-        return self.step(backtracking=backtracking)
-=======
-        return self.step(backtracking=backtracking) and self.grid
->>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
+        
+        def solve(self, backtracking=False):
+            """
+            Solve the sudoku using recursive exhaustive search.
+            This is done by calling the "step" method, which does one recursive step.
+            This can be visualized as a process tree, where "step" completes the functionality of of node.
+            
+            This method is already implemented and you do not have to do anything here.
+    
+            :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+            :type backtracking: boolean, optional
+            :return: This method returns if a correct solution for the whole sudoku was found.
+            :rtype: boolean
+            """
+            return self.step(backtracking=backtracking) 
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
