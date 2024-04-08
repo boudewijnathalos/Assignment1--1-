@@ -130,8 +130,11 @@ class Sudoku():
         :return: This method returns if the set is correct or not.
         :rtype: Boolean
         """
+        # flattening the box for checking for doubles
         flat_array = numbers.flatten()
+        # selecting only the nonzeros
         filled_in_numbers = flat_array[flat_array>0]
+        # checking for doubles
         return len(filled_in_numbers) == len(set(filled_in_numbers))
 
 
@@ -146,14 +149,16 @@ class Sudoku():
         :return: This method returns if the cell, denoted by row and column, is correct compared to the rest of the grid.
         :rtype: boolean
         """
+        # selecting rows, columns and boxes
         row_ = self.get_row(row)
-        filled_in_row = row_[row_>0]
         col_ = self.get_col(col)
-        filled_in_col = col_[col_>0]
         box_index = self.get_box_index(row, col)
         box2 = self.get_box(box_index).flatten()
+        # selecting only the nonzeros
+        filled_in_col = col_[col_>0]
+        filled_in_row = row_[row_>0]
         filled_in_box = box2[box2>0]
-
+        # checking for doubles
         if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
             return True
         else: 
@@ -170,7 +175,7 @@ class Sudoku():
         :return: This method returns if the (partial) Sudoku is correct.
         :rtype: Boolean
         """
-        a = self
+        
         for i in range(len(self.grid)):
             if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
                 return False
