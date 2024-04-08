@@ -185,13 +185,13 @@ class Sudoku():
         print(f"Attempting cell: ({row}, {col}), Current grid state:")
         for r in self.grid:
             print(r)
-    
+
         if row == len(self.grid):  # End of grid check
             print('End of Sudoku reached. Final grid:')
             for r in self.grid:
                 print(r)
             return self.check_sudoku()
-    
+
         if self.grid[row][col] != 0:  # Skip filled cells
             return self.next_step(row, col)
         
