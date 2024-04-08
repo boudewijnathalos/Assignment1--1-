@@ -181,21 +181,21 @@ class Sudoku():
 
 ############ CODE BLOCK 14 ################
     def step(self, row=0, col=0, backtracking=False):
-        print(self.grid)
-        if row == len(self.grid) and self.check_sudoku: 
-            return True 
+        if row == len(self.grid):  # End of grid check, time to validate the whole grid
+            print(self.grid)
+            return self.check_sudoku()  # Check if the filled grid is a valid solution
 
-        if self.grid[row][col] != 0:  
+        if self.grid[row][col] != 0:  # Skip filled cells
             return self.next_step(row, col, backtracking)
         
         for num in range(1, len(self.grid) + 1):  # Try all possible numbers
             self.grid[row][col] = num
-            if (backtracking and self.check_cell(row, col) and self.next_step(row, col, backtracking)) or (not backtracking and self.next_step(row, col, backtracking)):
+            if self.next_step(row, col, backtracking):  # Move to the next cell
                 return True
-            self.clean_up(row, col)
-            
-        return False  
+        self.clean_up(row, col)
         
+        return False  # Continue trying numbers if no solution found yet
+
     def next_step(self, row, col, backtracking):
         next_col = (col + 1) % len(self.grid)
         next_row = row if col < len(self.grid) - 1 else row + 1
@@ -204,17 +204,17 @@ class Sudoku():
     def clean_up(self, row, col):
         self.grid[row][col] = 0  # Reset the cell to empty
 
-    def solve(self, backtracking):
-        print("lse")
+    
+
+    def solve(self, backtracking=False):
         """
-        Solve the sudoku using either recursive exhaustive search or backtracking.
-        This is determined by the `backtracking` flag.
+        Solve the sudoku using a brute force approach.
         
-        :param backtracking: Determines if backtracking is used (True) or if exhaustive search without backtracking is used (False).
-        :type backtracking: boolean, optional
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
+
+    
         return self.step(backtracking=backtracking)
 
 
