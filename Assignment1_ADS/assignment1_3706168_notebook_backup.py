@@ -181,13 +181,13 @@ class Sudoku():
         print(f"Attempting cell: ({row}, {col}), Current grid state:")
         for r in self.grid:
             print(r)
-    
+
         if row == len(self.grid):  # End of grid check
             print('End of Sudoku reached. Final grid:')
             for r in self.grid:
                 print(r)
             return self.check_sudoku()
-    
+
         if self.grid[row][col] != 0:  # Skip filled cells
             return self.next_step(row, col)
         
@@ -211,20 +211,20 @@ class Sudoku():
         self.grid[row][col] = 0  # Reset the cell to empty
 
         
-        def solve(self, backtracking=False):
-            """
-            Solve the sudoku using recursive exhaustive search.
-            This is done by calling the "step" method, which does one recursive step.
-            This can be visualized as a process tree, where "step" completes the functionality of of node.
-            
-            This method is already implemented and you do not have to do anything here.
-    
-            :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
-            :type backtracking: boolean, optional
-            :return: This method returns if a correct solution for the whole sudoku was found.
-            :rtype: boolean
-            """
-            return self.step(backtracking=backtracking) 
+    def solve(self, backtracking=False):
+        """
+        Solve the sudoku using recursive exhaustive search.
+        This is done by calling the "step" method, which does one recursive step.
+        This can be visualized as a process tree, where "step" completes the functionality of of node.
+        
+        This method is already implemented and you do not have to do anything here.
+
+        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+        :type backtracking: boolean, optional
+        :return: This method returns if a correct solution for the whole sudoku was found.
+        :rtype: boolean
+        """
+        return self.step(backtracking=backtracking) 
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################

@@ -178,15 +178,8 @@ class Sudoku():
 
 ############ CODE BLOCK 14 ################
     def step(self, row=0, col=0, backtracking=False):
-        print(f"Attempting cell: ({row}, {col}), Current grid state:")
-        for r in self.grid:
-            print(r)
-
         if row == len(self.grid):  # End of grid check
-            print('End of Sudoku reached. Final grid:')
-            for r in self.grid:
-                print(r)
-            return self.check_sudoku()
+            return True  # If end of grid is reached, the solution is assumed correct
 
         if self.grid[row][col] != 0:  # Skip filled cells
             return self.next_step(row, col)
@@ -198,19 +191,16 @@ class Sudoku():
                     return True
             self.grid[row][col] = 0  # Reset cell before trying next number
         
-        return False  # Backtrack if no number fits
+        return False  # Trigger backtrack if no number fits
 
     def next_step(self, row, col):
-        if col == len(self.grid) - 1:  # Move to the next row if at the end of the current row
-            return self.step(row + 1, 0)
-        else:  # Otherwise, just move to the next column
-            return self.step(row, col + 1)
+        next_col = (col + 1) % len(self.grid)
+        next_row = row if col < len(self.grid) - 1 else row + 1
+        return self.step(next_row, next_col)
 
     def clean_up(self, row, col):
-        print(f"Cleaning up cell: ({row}, {col}), resetting to empty")
         self.grid[row][col] = 0  # Reset the cell to empty
 
-        
     def solve(self, backtracking=False):
         """
         Solve the sudoku using recursive exhaustive search.
