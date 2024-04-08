@@ -150,8 +150,12 @@ class Sudoku():
         filled_in_row = row_[row_>0]
         col_ = self.get_col(col)
         filled_in_col = col_[col_>0]
+        box_index = self.get_box_index(row, col)
+        box2 = self.get_box(box_index).flatten()
+        print(box2)
+        filled_in_box = box2[box2>0]
 
-        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)):
+        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
             return True
         else: 
             return False
