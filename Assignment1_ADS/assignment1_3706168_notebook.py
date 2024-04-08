@@ -130,9 +130,8 @@ class Sudoku():
         :return: This method returns if the set is correct or not.
         :rtype: Boolean
         """
-        filled_in_numbers = numbers[numbers>0]
-        box = len(np.sqrt(self.grid))
-        # if not self.is_set_correct(self.get_box_index(filled_in_numbers)) and not 
+        flat_array = numbers.flatten()
+        filled_in_numbers = flat_array[flat_array>0]
         return len(filled_in_numbers) == len(set(filled_in_numbers))
 
 
@@ -168,13 +167,11 @@ class Sudoku():
         :return: This method returns if the (partial) Sudoku is correct.
         :rtype: Boolean
         """
-        # a = self
-        # for i in range(len(self.grid)):
-        #     if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)):
-        #         return False
-        # for i in range(len(sqrt(self.get_box))):
-        #     if not self.is_set_correct(self.box_index()):
-        # return True 
+        a = self
+        for i in range(len(self.grid)):
+            if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
+                return False
+        return True 
         
 
         
@@ -198,8 +195,28 @@ class Sudoku():
         :type backtracking: boolean, optional
         :return: This method returns if a correct solution can be found using this step.
         :rtype: boolean
+<<<<<<< HEAD
         """
         raise NotImplementedError("Please complete this method")
+=======
+        
+        """
+        if row == len(self.grid): 
+            
+            return True
+        row_nr, col_nr = self.next_step(row, col)
+        for number in range(1, len(self.grid)+1):
+            if self.check_cell(row_nr, col_nr):
+                self.grid[row_nr][col_nr] = number
+                if self.step(row_nr, col_nr, backtracking):
+                    return True
+
+                self.clean_up(row, col)
+            
+        return False
+                    
+        
+>>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
 
     def next_step(self, row, col):
         """
@@ -215,7 +232,17 @@ class Sudoku():
         :return: This method returns if a correct solution can be found using this next step.
         :rtype: boolean
         """
+<<<<<<< HEAD
         raise NotImplementedError("Please complete this method")
+=======
+        for i in range(row, len(self.grid)):
+            for j in range(len(self.grid)):
+                if self.grid[i][j] == 0:
+                    return i, j
+
+        return None, None
+        
+>>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
     
     def clean_up(self, row, col):
         """
@@ -228,7 +255,11 @@ class Sudoku():
         :return: This method returns if a correct solution can be found using this next step.
         :rtype: boolean
         """
+<<<<<<< HEAD
         raise NotImplementedError("Please complete this method")
+=======
+        self.grid[row][col] = 0
+>>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
     
     def solve(self, backtracking=False):
         """
@@ -243,7 +274,11 @@ class Sudoku():
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
+<<<<<<< HEAD
         return self.step(backtracking=backtracking)
+=======
+        return self.step(backtracking=backtracking) and self.grid
+>>>>>>> e54ab05af8cbf2c0dc699875582b728b2b405e4c
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
