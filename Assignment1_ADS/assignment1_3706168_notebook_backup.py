@@ -60,5 +60,208 @@ class Sudoku():
         self.grid = grid
         return grid
 
+############ CODE BLOCK 12 ################
+    def get_row(self, row_id):
+        """
+        This method returns the row with index row_id.
+
+        :param row_id: The index of the row.
+        :type row_id: int
+        :return: A row of the sudoku.
+        :rtype: np.ndarray[(Any,), int]
+        """
+        
+        return self.grid[row_id]
+
+    def get_col(self, col_id):
+        """
+        This method returns the column with index col_id.
+
+        :param col_id: The index of the column.
+        :type col_id: int
+        :return: A row of the sudoku.
+        :rtype: np.ndarray[(Any,), int]
+        """
+        return self.grid[:, col_id]
+       
+
+    def get_box_index(self, row, col):
+        """
+        This returns the box index of a cell given the row and column index.
+        
+        :param col: The column index.
+        :type col: int
+        :param row: The row index.
+        :type row: int
+        :return: This returns the box index of a cell.
+        :rtype: int
+        """
+        x = int(np.sqrt(len(self.grid)))
+        return ((row)//x)*x+((col)//x)
+
+    def get_box(self, box_id):
+        """
+        This method returns the "box_id" box.
+
+        :param box_id: The index of the sudoku box.
+        :type box_id: int
+        :return: A box of the sudoku.
+        :rtype: np.ndarray[(Any, Any), int]
+        """
+        x = int(np.sqrt(len(self.grid)))
+        
+        start_row = ((box_id-1) // x) * x
+        start_col = ((box_id-1) % x) * x
+        
+        
+        return self.grid[start_row:start_row + x, start_col:start_col + x]
+        
+
+############ CODE BLOCK 13 ################
+    @staticmethod
+    def is_set_correct(numbers):
+        """
+        This method checks if a set (row, column, or box) is correct according to the rules of a sudoku.
+        In other words, this method checks if a set of numbers contains duplicate values between 1 and the size of the sudoku.
+        Note, that multiple empty cells are not considered duplicates.
+
+        :param numbers: The numbers of a sudoku's row, column, or box.
+        :type numbers: np.ndarray[(Any, Any), int] or np.ndarray[(Any, ), int]
+        :return: This method returns if the set is correct or not.
+        :rtype: Boolean
+        """
+        flat_array = numbers.flatten()
+        filled_in_numbers = flat_array[flat_array>0]
+        return len(filled_in_numbers) == len(set(filled_in_numbers))
+
+
+    def check_cell(self, row, col):
+        """
+        This method checks if the cell, denoted by row and column, is correct according to the rules of sudoku.
+        
+        :param col: The column index that is tested.
+        :type col: int
+        :param row: The row index that is tested.
+        :type row: int
+        :return: This method returns if the cell, denoted by row and column, is correct compared to the rest of the grid.
+        :rtype: boolean
+        """
+        row_ = self.get_row(row)
+        filled_in_row = row_[row_>0]
+        col_ = self.get_col(col)
+        filled_in_col = col_[col_>0]
+
+        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)):
+            return True
+        else: 
+            return False
+
+    def check_sudoku(self):
+        """
+        This method checks, for all rows, columns, and boxes, if they are correct according to the rules of a sudoku.
+        In other words, this method checks, for all rows, columns, and boxes, if a set of numbers contains duplicate values between 1 and the size of the sudoku.
+        Note, that multiple empty cells are not considered duplicates.
+
+        Hint: It is not needed to check if every cell is correct to check if a complete sudoku is correct.
+
+        :return: This method returns if the (partial) Sudoku is correct.
+        :rtype: Boolean
+        """
+        a = self
+        for i in range(len(self.grid)):
+            if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
+                return False
+        return True 
+        
+
+        
+
+############ CODE BLOCK 14 ################
+    def step(self, row=0, col=0, backtracking=False):
+        """
+        This is a recursive method that completes one step in the exhaustive search algorithm.
+        A step should contain at least, filling in one number in the sudoku and calling "next_step" to go to the next step.
+        If the current number for this step does not give a correct solution another number should be tried 
+        and if no numbers work the previous step should be adjusted.
+        
+        Hint 1: Numbers, that are already filled in should not be overwritten.
+        Hint 2: Think about a base case.
+    
+        :param col: The current column index.
+        :type col: int
+        :param row: The current row index.
+        :type row: int
+        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+        :type backtracking: boolean, optional
+        :return: This method returns if a correct solution can be found using this step.
+        :rtype: boolean
+        
+        """
+        if row == len(self.grid): 
+            
+            return True
+        row_nr, col_nr = self.next_step(row, col)
+        for number in range(1, len(self.grid)+1):
+            if self.check_cell(row_nr, col_nr):
+                self.grid[row_nr][col_nr] = number
+                if self.step(row_nr, col_nr, backtracking):
+                    return True
+
+                self.clean_up(row, col)
+            
+        return False
+                    
+        
+
+    def next_step(self, row, col):
+        """
+        This method calculates the next step in the recursive exhaustive search algorithm.
+        This method should only determine which cell should be filled in next.
+        
+        :param col: The current column index.
+        :type col: int
+        :param row: The current row index.
+        :type row: int
+        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+        :type backtracking: boolean, optional
+        :return: This method returns if a correct solution can be found using this next step.
+        :rtype: boolean
+        """
+        for i in range(row, len(self.grid)):
+            for j in range(len(self.grid)):
+                if self.grid[i][j] == 0:
+                    return i, j
+
+        return None, None
+        
+    
+    def clean_up(self, row, col):
+        """
+        This method cleans up the current cell if no solution can be found for this cell.
+        
+        :param col: The current column index.
+        :type col: int
+        :param row: The current row index.
+        :type row: int
+        :return: This method returns if a correct solution can be found using this next step.
+        :rtype: boolean
+        """
+        self.grid[row][col] = 0
+    
+    def solve(self, backtracking=False):
+        """
+        Solve the sudoku using recursive exhaustive search.
+        This is done by calling the "step" method, which does one recursive step.
+        This can be visualized as a process tree, where "step" completes the functionality of of node.
+        
+        This method is already implemented and you do not have to do anything here.
+
+        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+        :type backtracking: boolean, optional
+        :return: This method returns if a correct solution for the whole sudoku was found.
+        :rtype: boolean
+        """
+        return self.step(backtracking=backtracking) and self.grid
+
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
