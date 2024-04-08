@@ -152,7 +152,6 @@ class Sudoku():
         filled_in_col = col_[col_>0]
         box_index = self.get_box_index(row, col)
         box2 = self.get_box(box_index).flatten()
-        print(box2)
         filled_in_box = box2[box2>0]
 
         if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
@@ -182,43 +181,41 @@ class Sudoku():
 
 ############ CODE BLOCK 14 ################
     def step(self, row=0, col=0, backtracking=False):
-        if row == len(self.grid):  # End of grid check
-            return True  # If end of grid is reached, the solution is assumed correct
+        print(self.grid)
+        if row == len(self.grid) and self.check_sudoku: 
+            return True 
 
-        if self.grid[row][col] != 0:  # Skip filled cells
-            return self.next_step(row, col)
+        if self.grid[row][col] != 0:  
+            return self.next_step(row, col, backtracking)
         
         for num in range(1, len(self.grid) + 1):  # Try all possible numbers
             self.grid[row][col] = num
-            if self.check_cell(row, col):  # Validate the cell with the new number
-                if self.next_step(row, col):  # Move to the next cell
-                    return True
-            self.grid[row][col] = 0  # Reset cell before trying next number
+            if (backtracking and self.check_cell(row, col) and self.next_step(row, col, backtracking)) or (not backtracking and self.next_step(row, col, backtracking)):
+                return True
+            self.clean_up(row, col)
+            
+        return False  
         
-        return False  # Trigger backtrack if no number fits
-
-    def next_step(self, row, col):
+    def next_step(self, row, col, backtracking):
         next_col = (col + 1) % len(self.grid)
         next_row = row if col < len(self.grid) - 1 else row + 1
-        return self.step(next_row, next_col)
+        return self.step(next_row, next_col, backtracking)
 
     def clean_up(self, row, col):
         self.grid[row][col] = 0  # Reset the cell to empty
 
-    def solve(self, backtracking=False):
+    def solve(self, backtracking):
+        print("lse")
         """
-        Solve the sudoku using recursive exhaustive search.
-        This is done by calling the "step" method, which does one recursive step.
-        This can be visualized as a process tree, where "step" completes the functionality of of node.
+        Solve the sudoku using either recursive exhaustive search or backtracking.
+        This is determined by the `backtracking` flag.
         
-        This method is already implemented and you do not have to do anything here.
-
-        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
+        :param backtracking: Determines if backtracking is used (True) or if exhaustive search without backtracking is used (False).
         :type backtracking: boolean, optional
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
-        return self.step(backtracking=backtracking) 
+        return self.step(backtracking=backtracking)
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################

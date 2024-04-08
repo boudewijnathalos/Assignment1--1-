@@ -150,8 +150,11 @@ class Sudoku():
         filled_in_row = row_[row_>0]
         col_ = self.get_col(col)
         filled_in_col = col_[col_>0]
+        box_index = self.get_box_index(row, col)
+        box2 = self.get_box(box_index).flatten()
+        filled_in_box = box2[box2>0]
 
-        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)):
+        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
             return True
         else: 
             return False
@@ -177,54 +180,46 @@ class Sudoku():
         
 
 ############ CODE BLOCK 14 ################
-    def step(self, row=0, col=0, backtracking=False):
-        print(f"Attempting cell: ({row}, {col}), Current grid state:")
-        for r in self.grid:
-            print(r)
-
-        if row == len(self.grid):  # End of grid check
-            print('End of Sudoku reached. Final grid:')
-            for r in self.grid:
-                print(r)
-            return self.check_sudoku()
+    def step(self, row=0, col=0):
+        if row == len(self.grid):  # End of grid check, time to validate the whole grid
+            return self.check_sudoku()  # Check if the filled grid is a valid solution
 
         if self.grid[row][col] != 0:  # Skip filled cells
             return self.next_step(row, col)
         
         for num in range(1, len(self.grid) + 1):  # Try all possible numbers
             self.grid[row][col] = num
-            if self.check_cell(row, col):  # Validate the cell with the new number
-                if self.next_step(row, col):  # Move to the next cell
-                    return True
-            self.grid[row][col] = 0  # Reset cell before trying next number
+            if self.next_step(row, col):  # Move to the next cell
+                return True
+        self.clean_up(row, col)
         
-        return False  # Backtrack if no number fits
+        return False  # Continue trying numbers if no solution found yet
 
     def next_step(self, row, col):
-        if col == len(self.grid) - 1:  # Move to the next row if at the end of the current row
-            return self.step(row + 1, 0)
-        else:  # Otherwise, just move to the next column
-            return self.step(row, col + 1)
+        next_col = (col + 1) % len(self.grid)
+        next_row = row if col < len(self.grid) - 1 else row + 1
+        return self.step(next_row, next_col)
 
     def clean_up(self, row, col):
-        print(f"Cleaning up cell: ({row}, {col}), resetting to empty")
         self.grid[row][col] = 0  # Reset the cell to empty
 
-        
-    def solve(self, backtracking=False):
-        """
-        Solve the sudoku using recursive exhaustive search.
-        This is done by calling the "step" method, which does one recursive step.
-        This can be visualized as a process tree, where "step" completes the functionality of of node.
-        
-        This method is already implemented and you do not have to do anything here.
+    
 
-        :param backtracking: This determines if backtracking is used. For now, this can be ignored. It defaults to False.
-        :type backtracking: boolean, optional
+    def solve(self):
+        """
+        Solve the sudoku using a brute force approach.
+        
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
-        return self.step(backtracking=backtracking) 
+        if self.step():
+            print("Sudoku solved:")
+            for row in self.grid:
+                print(row)
+            return True
+        else:
+            print("No solution found.")
+            return False
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################
