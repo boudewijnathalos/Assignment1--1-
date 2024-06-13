@@ -7,47 +7,6 @@ import copy
 
 RNG = np.random.default_rng()
 
-############ CODE BLOCK 10 ################
-class Sudoku():
-    """
-    This class creates sudoku objects which can be used to solve sudokus. 
-    A sudoku object can be any size grid, as long as the square root of the size is a whole integer.
-    To indicate that a cell in the sudoku grid is empty we use a zero.
-    A sudoku object is initialized with an empty grid of a certain size.
-
-    Attributes:
-        :param self.grid: The sudoku grid containing all the digits.
-        :type self.grid: np.ndarray[(Any, Any), int]  # The first type hint is the shape, and the second one is the dtype. 
-        :param self.size: The width/height of the sudoku grid.
-        :type self.size: int
-    """
-    def __init__(self, size=49):
-        self.grid = np.zeros((size, size))
-        self.size = size
-        
-    def is_valid_sudoku_size(self, size):
-        for i in range(1, size + 1):
-            if i * i == size:
-                return True
-            elif i * i > size:
-                break
-        return False
-    
-    def __repr__(self):
-        if self.is_valid_sudoku_size(self.size):
-            string_grid = ""
-            for i, row in enumerate(self.grid):
-                if i % int(np.sqrt(self.size)) == 0 and i != 0:
-                    string_grid += "\n"  
-                for j, val in enumerate(row):
-                    if j % int(np.sqrt(self.size)) == 0 and j != 0:
-                        string_grid += "| "  
-                    string_grid += f"{int(val)} "
-                string_grid += "\n" 
-            return string_grid
-        else:
-            return 'Not a valid sudoku size'
-
 ############ CODE BLOCK 11 ################
     def set_grid(self, grid):
         """
@@ -56,66 +15,9 @@ class Sudoku():
         :param grid: A 2D numpy array that contains the digits for the grid.
         :type grid: ndarray[(Any, Any), int]
         """
-        
+        # Update the Sudoku grid with the new provided grid
         self.grid = grid
         return grid
-
-############ CODE BLOCK 12 ################
-    def get_row(self, row_id):
-        """
-        This method returns the row with index row_id.
-
-        :param row_id: The index of the row.
-        :type row_id: int
-        :return: A row of the sudoku.
-        :rtype: np.ndarray[(Any,), int]
-        """
-        
-        return self.grid[row_id]
-
-    def get_col(self, col_id):
-        """
-        This method returns the column with index col_id.
-
-        :param col_id: The index of the column.
-        :type col_id: int
-        :return: A row of the sudoku.
-        :rtype: np.ndarray[(Any,), int]
-        """
-        return self.grid[:, col_id]
-       
-
-    def get_box_index(self, row, col):
-        """
-        This returns the box index of a cell given the row and column index.
-        
-        :param col: The column index.
-        :type col: int
-        :param row: The row index.
-        :type row: int
-        :return: This returns the box index of a cell.
-        :rtype: int
-        """
-        x = int(np.sqrt(len(self.grid)))
-        return ((row)//x)*x+((col)//x)
-
-    def get_box(self, box_id):
-        """
-        This method returns the "box_id" box.
-
-        :param box_id: The index of the sudoku box.
-        :type box_id: int
-        :return: A box of the sudoku.
-        :rtype: np.ndarray[(Any, Any), int]
-        """
-        x = int(np.sqrt(len(self.grid)))
-        
-        start_row = ((box_id) // x) * x
-        start_col = ((box_id) % x) * x
-        
-        
-        return self.grid[start_row:start_row + x, start_col:start_col + x]
-        
 
 ############ CODE BLOCK 13 ################
     @staticmethod
@@ -175,51 +77,51 @@ class Sudoku():
         :return: This method returns if the (partial) Sudoku is correct.
         :rtype: Boolean
         """
-        
+        # checking every number of row, column or box if the value is correct
         for i in range(len(self.grid)):
             if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
                 return False
-        return True 
+        return True
         
 
         
 
 ############ CODE BLOCK 14 ################
-    def step(self, row=0, col=0):
-        if row == len(self.grid):  # End of grid check, time to validate the whole grid
-            print(self.grid)
-            return self.check_sudoku()  # Check if the filled grid is a valid solution
+    def step(self, row=0, col=0, backtracking=False):
+        print(self.grid)
+        if row == len(self.grid) and self.check_sudoku: 
+            return True 
 
-        if self.grid[row][col] != 0:  # Skip filled cells
-            return self.next_step(row, col)
+        if self.grid[row][col] != 0:  
+            return self.next_step(row, col, backtracking)
         
         for num in range(1, len(self.grid) + 1):  # Try all possible numbers
             self.grid[row][col] = num
-            if self.next_step(row, col):  # Move to the next cell
+            if (not backtracking or self.check_cell(row, col)) and self.next_step(row, col, backtracking):
                 return True
-        self.clean_up(row, col)
+            self.clean_up(row, col)
+            
+        return False  
         
-        return False  # Continue trying numbers if no solution found yet
-
-    def next_step(self, row, col):
+    def next_step(self, row, col, backtracking):
         next_col = (col + 1) % len(self.grid)
         next_row = row if col < len(self.grid) - 1 else row + 1
-        return self.step(next_row, next_col)
+        return self.step(next_row, next_col, backtracking)
 
     def clean_up(self, row, col):
         self.grid[row][col] = 0  # Reset the cell to empty
 
-    
-
-    def solve(self):
+    def solve(self, backtracking):
+        print("lse")
         """
-        Solve the sudoku using a brute force approach.
+        Solve the sudoku using either recursive exhaustive search or backtracking.
+        This is determined by the `backtracking` flag.
         
+        :param backtracking: Determines if backtracking is used (True) or if exhaustive search without backtracking is used (False).
+        :type backtracking: boolean, optional
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
-
-    
         return self.step(backtracking=backtracking)
 
 
