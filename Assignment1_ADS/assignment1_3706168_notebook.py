@@ -96,9 +96,7 @@ class Sudoku():
         :return: This returns the box index of a cell.
         :rtype: int
         """
-        # getting the row length of a box
         x = int(np.sqrt(len(self.grid)))
-        # returning box index
         return ((row)//x)*x+((col)//x)
 
     def get_box(self, box_id):
@@ -110,13 +108,12 @@ class Sudoku():
         :return: A box of the sudoku.
         :rtype: np.ndarray[(Any, Any), int]
         """
-        # getting length of the box
         x = int(np.sqrt(len(self.grid)))
-        # getting the starting box of the rows and columns
+        
         start_row = ((box_id) // x) * x
         start_col = ((box_id) % x) * x
         
-        # returning the box
+        
         return self.grid[start_row:start_row + x, start_col:start_col + x]
         
 
@@ -133,14 +130,10 @@ class Sudoku():
         :return: This method returns if the set is correct or not.
         :rtype: Boolean
         """
-        # flattening the box for checking for doubles
         flat_array = numbers.flatten()
-        # selecting only the nonzeros
         filled_in_numbers = flat_array[flat_array>0]
-        # checking for doubles
         return len(filled_in_numbers) == len(set(filled_in_numbers))
-
-
+        
     def check_cell(self, row, col):
         """
         This method checks if the cell, denoted by row and column, is correct according to the rules of sudoku.
@@ -152,20 +145,12 @@ class Sudoku():
         :return: This method returns if the cell, denoted by row and column, is correct compared to the rest of the grid.
         :rtype: boolean
         """
-        # selecting rows, columns and boxes
         row_ = self.get_row(row)
         col_ = self.get_col(col)
         box_index = self.get_box_index(row, col)
         box2 = self.get_box(box_index).flatten()
-        # selecting only the nonzeros
-        filled_in_col = col_[col_>0]
-        filled_in_row = row_[row_>0]
-        filled_in_box = box2[box2>0]
-        # checking for doubles
-        if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
-            return True
-        else: 
-            return False
+
+        return self.is_set_correct(row_) and self.is_set_correct(col_) and self.is_set_correct(box2)
 
     def check_sudoku(self):
         """
@@ -178,57 +163,14 @@ class Sudoku():
         :return: This method returns if the (partial) Sudoku is correct.
         :rtype: Boolean
         """
-        # checking every number of row, column or box if the value is correct
+        a = self
         for i in range(len(self.grid)):
             if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
                 return False
-        return True
+        return True 
         
 
         
-
-############ CODE BLOCK 14 ################
-    def step(self, row=0, col=0, backtracking=False):
-        # When the algorithm has filled in every number, the sudoku is checked
-        if row == len(self.grid):  
-            print(self.grid)
-            return self.check_sudoku()  
-        # getting only the cells with zeros
-        if self.grid[row][col] != 0:  
-            return self.next_step(row, col)
-        # trying all possible numbers
-        for num in range(1, len(self.grid) + 1):  
-            self.grid[row][col] = num
-            # go to next cell
-            if self.next_step(row, col):
-                return True
-        # clean up the cell 
-        self.clean_up(row, col)
-        # continue until right numbers are found
-        return False  
-
-    def next_step(self, row, col):
-        # determining the right next cell
-        next_col = (col + 1) % len(self.grid)
-        next_row = row if col < len(self.grid) - 1 else row + 1
-        return self.step(next_row, next_col)
-
-    def clean_up(self, row, col):
-        # resetting the value to zero
-        self.grid[row][col] = 0  
-
-    
-
-    def solve(self, backtracking=False):
-        """
-        Solve the sudoku using a brute force approach.
-        
-        :return: This method returns if a correct solution for the whole sudoku was found.
-        :rtype: boolean
-        """
-
-    
-        return self.step(backtracking=backtracking)
 
 
 ############ END OF CODE BLOCKS, START SCRIPT BELOW! ################

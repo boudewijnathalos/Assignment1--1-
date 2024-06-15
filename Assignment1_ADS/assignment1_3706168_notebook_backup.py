@@ -130,11 +130,8 @@ class Sudoku():
         :return: This method returns if the set is correct or not.
         :rtype: Boolean
         """
-        # flattening the box for checking for doubles
         flat_array = numbers.flatten()
-        # selecting only the nonzeros
         filled_in_numbers = flat_array[flat_array>0]
-        # checking for doubles
         return len(filled_in_numbers) == len(set(filled_in_numbers))
 
 
@@ -149,16 +146,14 @@ class Sudoku():
         :return: This method returns if the cell, denoted by row and column, is correct compared to the rest of the grid.
         :rtype: boolean
         """
-        # selecting rows, columns and boxes
         row_ = self.get_row(row)
+        filled_in_row = row_[row_>0]
         col_ = self.get_col(col)
+        filled_in_col = col_[col_>0]
         box_index = self.get_box_index(row, col)
         box2 = self.get_box(box_index).flatten()
-        # selecting only the nonzeros
-        filled_in_col = col_[col_>0]
-        filled_in_row = row_[row_>0]
         filled_in_box = box2[box2>0]
-        # checking for doubles
+
         if len(filled_in_row) == len(set(filled_in_row)) and len(filled_in_col) == len(set(filled_in_col)) and len(filled_in_box) == len(set(filled_in_box)):
             return True
         else: 
@@ -175,7 +170,7 @@ class Sudoku():
         :return: This method returns if the (partial) Sudoku is correct.
         :rtype: Boolean
         """
-        
+        a = self
         for i in range(len(self.grid)):
             if not self.is_set_correct(self.get_row(i)) or not self.is_set_correct(self.get_col(i)) or not self.is_set_correct(self.get_box(i)):
                 return False
@@ -185,41 +180,40 @@ class Sudoku():
         
 
 ############ CODE BLOCK 14 ################
-    def step(self, row=0, col=0):
-        if row == len(self.grid):  # End of grid check, time to validate the whole grid
-            print(self.grid)
-            return self.check_sudoku()  # Check if the filled grid is a valid solution
+    def step(self, row=0, col=0, backtracking=False):
+        print(self.grid)
+        if row == len(self.grid) and self.check_sudoku: 
+            return True 
 
-        if self.grid[row][col] != 0:  # Skip filled cells
-            return self.next_step(row, col)
+        if self.grid[row][col] != 0:  
+            return self.next_step(row, col, backtracking)
         
-        for num in range(1, len(self.grid) + 1):  # Try all possible numbers
+        for num in range(1, len(self.grid) + 1):  
             self.grid[row][col] = num
-            if self.next_step(row, col):  # Move to the next cell
+            if (not backtracking or self.check_cell(row, col)) and self.next_step(row, col, backtracking):
                 return True
-        self.clean_up(row, col)
+            self.clean_up(row, col)
+            
+        return False  
         
-        return False  # Continue trying numbers if no solution found yet
-
-    def next_step(self, row, col):
+    def next_step(self, row, col, backtracking):
         next_col = (col + 1) % len(self.grid)
         next_row = row if col < len(self.grid) - 1 else row + 1
-        return self.step(next_row, next_col)
+        return self.step(next_row, next_col, backtracking)
 
     def clean_up(self, row, col):
-        self.grid[row][col] = 0  # Reset the cell to empty
+        self.grid[row][col] = 0  
 
-    
-
-    def solve(self):
+    def solve(self, backtracking):
         """
-        Solve the sudoku using a brute force approach.
+        Solve the sudoku using either recursive exhaustive search or backtracking.
+        This is determined by the `backtracking` flag.
         
+        :param backtracking: Determines if backtracking is used (True) or if exhaustive search without backtracking is used (False).
+        :type backtracking: boolean, optional
         :return: This method returns if a correct solution for the whole sudoku was found.
         :rtype: boolean
         """
-
-    
         return self.step(backtracking=backtracking)
 
 
