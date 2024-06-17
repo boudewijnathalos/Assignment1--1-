@@ -124,8 +124,9 @@ class TestSudoku(ExtendTestCase):
 def ftos(filename):
     sudoku = Sudoku()
     with open(filename, 'r') as f:
-    
-    
+        sudoku.grid = np.array([list(map(int, line.split(','))) for line in f])
+        sudoku.size = int(np.sqrt(sudoku.grid.size))
+    return sudoku
 
 # run the unittest if the file is just run as a normal python file (without extra command line options)
 if __name__ == "__main__" and Path.cwd() / sys.argv[0] == Path.cwd() / __file__:
@@ -133,4 +134,3 @@ if __name__ == "__main__" and Path.cwd() / sys.argv[0] == Path.cwd() / __file__:
     for tests in [obj for obj in dir() if obj[:4] == "Test"]:
         suite = unittest.TestLoader().loadTestsFromTestCase(locals()[tests])
         unittest.TextTestRunner(verbosity=2).run(suite)
-        
